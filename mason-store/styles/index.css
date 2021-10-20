@@ -1,0 +1,157 @@
+.seek-form-box {
+  float: left;
+}
+
+.general {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.el-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.seek-condition {
+  border: 1px solid #ebeef5;
+  overflow: hidden;
+  padding: 10px 10px 0px;
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.seek-form-box {
+  float: left;
+}
+
+.page {
+  margin-top: 20px;
+}
+
+.seek-condition .el-form-item {
+  float: left;
+}
+
+.el-select,
+.el-cascader {
+  width: 100%;
+}
+
+.el-date-editor.el-range-editor.el-input__inner.el-date-editor--daterange.el-range-editor--mini {
+  width: 100%;
+}
+
+.select-page.el-pagination {
+  text-align: right;
+  padding-right: 20px;
+}
+
+.dialog-img .el-upload--picture-card {
+  width: 120px;
+  height: 120px;
+  line-height: 115px;
+}
+
+.general-dialog .dialog-img {
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  width: 120px;
+  height: 120px;
+  float: left;
+  border: 1px solid #eee;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.cancel {
+  transition: all 0.3s;
+  position: absolute;
+  right: 6px;
+  top: -20px;
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  line-height: 18px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.dialog-img:hover .cancel {
+  top: 6px;
+}
+
+.dialog-img {
+  height: auto;
+  border: none;
+}
+
+.general-dialog .dialog-img .el-image {
+  width: 120px;
+}
+
+.el-image {
+  width: 100%;
+  height: 100%;
+}
+
+.general-dialog .dialog-img:nth-of-type(3n) {
+  margin-right: 0;
+}
+
+.general-dialog .el-input--mini .el-input__inner {
+  padding-right: 60px;
+}
+
+.general-dialog .el-input--mini .el-textarea__inner {
+  padding-right: 38px;
+}
+
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 100%;
+}
+.general-dialog .el-date-editor.el-input {
+  width: 100%;
+}
+
+.tox-statusbar__branding {
+  display: none;
+}
+
+.tox.tox-tinymce-aux,
+.tox .tox-dialog-wrap {
+  z-index: 5099;
+}
+
+.table .table-but {
+  float: left;
+  margin: 0 0px 0 10px;
+}
+
+.table-but .el-button span {
+  padding: 0;
+  margin: 0;
+}
+
+.tox-tinymce {
+  min-height: 800px;
+  max-height: 880px;
+}
+
+.editor-slide-upload .el-upload-list__item {
+  width: 50%;
+  height: auto;
+}
+
+.table-but {
+  float: left;
+  margin-right: 10px;
+}
+
+.el-image-viewer__wrapper {
+  z-index: 2021 !important;
+}
