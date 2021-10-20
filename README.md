@@ -38,7 +38,7 @@ export default {
   <Integration v-if="isShowView" :data="modelConf" />
 </template>
 ```
-1. 更多详细配置，请查看[示例代码](https://gitee.com/yuebu/mason-components/blob/master/examples/App.vue)
+1. 更多详细配置，请查看[示例代码](https://gitee.com/yuebu/mason-store/blob/master/examples/App.vue)
 ## **Button** 按钮配置
 - 示例代码
 ``` JavaScript
