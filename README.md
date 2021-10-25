@@ -38,7 +38,7 @@ export default {
   <Integration v-if="isShowView" :data="modelConf" />
 </template>
 ```
-1. 更多详细配置，请查看[示例代码](https://gitee.com/yuebu/mason-store/blob/master/examples/App.vue)
+5. 更多详细配置，请查看示例代码。[点击前往完整源码](https://gitee.com/yuebu/mason-components/blob/master/examples/App.vue)
 ## **Button** 按钮配置
 - 示例代码
 ``` JavaScript
@@ -357,4 +357,42 @@ data() {
 
 ## 未完善部分
 > 富文本已经实现，由于安装包过大的问题，且不常用。这里暂不放出来。后期看需要再说。
+``` JavaScript
+  data() {
+    return {
+      label: '文章内容',
+      type: 'richtext',
+      prop: 'infoContent',
+      limit: 3,
+      requestModel: {
+        requestFn: requestModel.uploadOnePhotoUrl(),
+        uploadName: 'file',
+        uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
+        responseData: (response) => {
+          let res = {}
+          if (response.code === 0) {
+            res = {
+              code: 0,
+              msg: response.msg,
+              path: response.data.url,
+              data: response.data,
+            }
+          } else {
+            res = { code: 1, msg: response.msg }
+          }
+          return res
+        },
+      },
+    }
+  }
+```
+**requestModel说明**
+| 参数          | 说明               | 类型   | 可选参数 | 默认值 |
+| :------------ | :----------------- | :----- | :------- | :----- |
+| requestFn     | 上传图片的方法地址 | string | textarea | -      |
+| uploadName    | 上传文件名称       | string | 参考下方 | text   |
+| uploadHeaders | 上传文件携带请求头 | string | -        | 120px  |
+| responseData  | 处理返回参数       | object | -        | -      |
+
+> 特别说明：responseData 返回需要处理成code=0，组件才会认为成功，且带有path时，图片才能渲染成功。data供编辑/新增时 requestData 用的，可以自定义处理成接口需要的URL数据
 # End

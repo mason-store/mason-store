@@ -1,19 +1,22 @@
 {
   "name": "mason-store",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": false,
   "scripts": {
     "dev": "vue-cli-service serve",
     "server": "node ./examples/server/",
     "build": "vue-cli-service build",
-    "lib": "vue-cli-service build --target lib --dest lib mason-store/index.js"
+    "lib": "vue-cli-service build --target lib --dest lib mason-store/index.js",
+    "push": "npm publish"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^4.0.4",
     "axios": "^0.23.0",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
     "express": "^4.17.1",
-    "mason-store": "^0.1.4",
+    "mason-store": "^0.1.2",
+    "tinymce": "^5.10.0",
     "vue": "^2.6.11"
   },
   "devDependencies": {

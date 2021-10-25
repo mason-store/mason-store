@@ -934,6 +934,11 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
+"@tinymce/tinymce-vue@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@tinymce/tinymce-vue/-/tinymce-vue-4.0.4.tgz#b47934f2d1e106ac9af7fa9ba0316a8c96ed314c"
+  integrity sha512-nLd96QK8P53dCm+oF6j2D5AXoZ9MCZyjybt7B98wXo2csfKd2Ozbjv9dlnRKCdEe/JZBG4KbwBEjXlwsaAGEvg==
+
 "@types/anymatch@*":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@types/anymatch/-/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"
@@ -5211,18 +5216,6 @@ mason-store@^0.1.2:
     express "^4.17.1"
     vue "^2.6.11"
 
-mason-store@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/mason-store/-/mason-store-0.1.4.tgz#129596f9d5c406ef655e048ebc3430090d6d8ecc"
-  integrity sha512-9ftZ8EPXeW6jvVlCcyQRAhbgw8OqAjjYColdnghs6vKWo1WPObEyV1lS8UhD0ukfpoR0ejIzpybykYWTGSGfRA==
-  dependencies:
-    axios "^0.23.0"
-    core-js "^3.6.5"
-    element-ui "^2.15.6"
-    express "^4.17.1"
-    mason-store "^0.1.2"
-    vue "^2.6.11"
-
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -7829,6 +7822,11 @@ timsort@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
+
+tinymce@^5.10.0:
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.0.tgz#5f88b40c2b26dc72b126f7d04944014dcb1ace05"
+  integrity sha512-SaqBK8GtTKYSsTfhKdN0+NrZRgmVWO+j3fvgzLjt0t/g0osNzRH5os8icm2Rv5HvaeTd4TpxetUuLE+R9yg/yg==
 
 to-arraybuffer@^1.0.0:
   version "1.0.1"

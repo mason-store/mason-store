@@ -28,6 +28,8 @@
 <script>
 import { Integration } from 'mason-store/lib/mason-store.umd'
 import 'mason-store/lib/mason-store.css'
+// import { Integration } from '../mason-store/index'
+// import '../mason-store/styles/index.css'
 import * as requestModel from './api'
 import axios from 'axios'
 // 数据字段 - 性别
@@ -598,6 +600,31 @@ export default {
               },
               responseData: (response) => {
                 console.log(response)
+                let res = {}
+                if (response.code === 0) {
+                  res = {
+                    code: 0,
+                    msg: response.msg,
+                    path: response.data.url,
+                    data: response.data,
+                  }
+                } else {
+                  res = { code: 1, msg: response.msg }
+                }
+                return res
+              },
+            },
+          },
+          {
+            label: '文章内容',
+            type: 'richtext',
+            prop: 'infoContent',
+            limit: 3,
+            requestModel: {
+              requestFn: requestModel.uploadOnePhotoUrl(),
+              uploadName: 'file',
+              uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
+              responseData: (response) => {
                 let res = {}
                 if (response.code === 0) {
                   res = {

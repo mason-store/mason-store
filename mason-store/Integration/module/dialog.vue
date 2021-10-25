@@ -130,7 +130,7 @@
                 >
                 </el-date-picker>
               </el-form-item>
-              <!-- <el-form-item
+              <el-form-item
                 :label="item.label"
                 :prop="
                   (winText === '新增' && item.isAddPermit === false) ||
@@ -140,8 +140,13 @@
                 "
                 v-if="item.type === 'richtext'"
               >
-                <Tinymce v-model="winFormData[item.prop]" :requestModel="item.requestModel" :height="800" />
-              </el-form-item> -->
+                <Tinymce
+                  v-model="winFormData[item.prop]"
+                  :config="item"
+                  :requestModel="item.requestModel"
+                  :height="800"
+                />
+              </el-form-item>
               <el-form-item
                 :label="item.label"
                 :prop="
@@ -218,8 +223,10 @@
   </div>
 </template>
 <script>
+import Tinymce from '../../components/Tinymce/index.vue'
 export default {
   name: 'general-dialog',
+  components: { Tinymce },
   props: ['showWindow', 'formData', 'addOrSet', 'modelConf'],
   data() {
     return {
