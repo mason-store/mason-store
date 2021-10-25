@@ -355,36 +355,37 @@ data() {
 | requestData  | 处理请求参数                                                                                                                                        | function | -        | -      |
 | responseData | 处理返回参数，这里需要处理成object数据返回。code=0,组件才会认为成功，进行下一步动作；code=1，组件会提示用户，停止界面交互；msg是成功/失败的提示内容 | string   | -        | -      |
 
-## 未完善部分
+**富文本配置**
 > 富文本已经实现，由于安装包过大的问题，且不常用。这里暂不放出来。后期看需要再说。
 ``` JavaScript
-  data() {
-    return {
-      label: '文章内容',
-      type: 'richtext',
-      prop: 'infoContent',
-      limit: 3,
-      requestModel: {
-        requestFn: requestModel.uploadOnePhotoUrl(),
-        uploadName: 'file',
-        uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
-        responseData: (response) => {
-          let res = {}
-          if (response.code === 0) {
-            res = {
-              code: 0,
-              msg: response.msg,
-              path: response.data.url,
-              data: response.data,
-            }
-          } else {
-            res = { code: 1, msg: response.msg }
+const uploadOnePhotoUrl = () => {return 'http://127.0.0.1:8080/upload'}
+data() {
+  return {
+    label: '文章内容',
+    type: 'richtext',
+    prop: 'infoContent',
+    limit: 3,
+    requestModel: {
+      requestFn: uploadOnePhotoUrl(),
+      uploadName: 'file',
+      uploadHeaders: { Authorization: 'E208475180234=' }, // 上传头部数据
+      responseData: (response) => {
+        let res = {}
+        if (response.code === 0) {
+          res = {
+            code: 0,
+            msg: response.msg,
+            path: response.data.url,
+            data: response.data,
           }
-          return res
-        },
+        } else {
+          res = { code: 1, msg: response.msg }
+        }
+        return res
       },
-    }
+    },
   }
+}
 ```
 **requestModel说明**
 | 参数          | 说明               | 类型   | 可选参数 | 默认值 |
