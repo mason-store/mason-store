@@ -1,7 +1,7 @@
 export const setModelConf = (data) => {
   let config = {
     ...{
-      tableConfig: data.tableConf,// 常规列表
+      tableConfig: data.tabelConf,// 常规列表
       seekConfig: [],// 查询配置
       formConfig: [],// 表单配置
       formRules: {},// 表单验证
@@ -11,7 +11,6 @@ export const setModelConf = (data) => {
   }
   data.formConf.forEach((item) => {
     if (item.isSeek !== false) {
-      console.log(item.format)
       // 搜索区配置
       config.seekConfig.push({
         label: item.label,
@@ -21,7 +20,6 @@ export const setModelConf = (data) => {
         option: item.option,
         dateType: item.dateType || "",
         pickerOptions: item.pickerOptions,
-        format: item.format || 'yyyy-MM-dd',//配置时间格式
       });
     }
     // 表单配置

@@ -243,9 +243,7 @@
           </el-row>
         </el-form>
       </div>
-      <slot name="dialogForm" :formData="winFormData"></slot>
       <span slot="footer" class="dialog-footer">
-        <slot name="dialogButton" :formData="winFormData"></slot>
         <el-button @click="closeFn" size="mini"> 取消 </el-button>
         <el-button
           plain
@@ -261,6 +259,7 @@
     </el-dialog>
   </div>
 </template>
+
 <script>
 import Tinymce from "../../components/Tinymce/index.vue";
 export default {
@@ -451,7 +450,6 @@ export default {
     remoteMethod(val) {
       this.remoteVal = val;
       if (this.loading === false) {
-        console.log(this.modelConf.formConfig);
         const arr = this.modelConf.formConfig.filter(
           (item) => item.type === "select" && item.isRemote === true
         );
