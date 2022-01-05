@@ -146,3 +146,38 @@ export const disposeDelete = {
     return res;
   }
 }
+
+export const disposeQueryOne = {
+  // 查询一条请求参数处理
+  requestParams: (request, model) => ({ infoId: request.infoId }),
+  // 查询一条返回数据处理
+  response: (response) => {
+    let res = response;
+    if (res.code === 0) {
+      res = {
+        code: 0,
+        data: response.data.list[0],
+        msg: response.msg,
+      };
+    }
+    return res;
+  }
+}
+
+export const disposeUpload = {
+  // 查询一条返回数据处理
+  response: (response) => {
+    let res = {};
+    if (response.code === 0) {
+      res = {
+        code: 0,
+        msg: response.msg,
+        path: response.data.url,
+        data: response.data,
+      };
+    } else {
+      res = { code: 1, msg: response.msg };
+    }
+    return res;
+  }
+}

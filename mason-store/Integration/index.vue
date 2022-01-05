@@ -3,79 +3,90 @@
     <!-- 查询条件 -->
     <div class="general-seek">
       <div class="seek-buttons">
-        <span v-for="(item, index) in modelConf.buttonConf" :key="index">
+        <span v-for="(item, index) in modelConf.requestConf" :key="index">
           <el-button
             size="mini"
             type="primary"
             plain
             :icon="item.icon ? item.icon : 'el-icon-plus'"
             @click="onDialogForm(false, item)"
-            v-if="item.type === 'main' && item.isShow"
+            v-if="item.type === 'main' && item.name === 'add' && item.isShow"
           >
             {{ item.label }}
           </el-button>
         </span>
         <slot name="mainbuts"></slot>
       </div>
-      <el-form :inline="true" :model="seekData" class="seek-condition">
+      <el-form
+        :inline="true"
+        :model="seekData"
+        ref="searchForm"
+        class="seek-condition"
+        v-loading="isSearchLoading"
+      >
         <div
           class="seek-form-box"
-          v-for="(item, index) in modelConf.seekConfig"
+          v-for="(item, index) in modelConf.formConfig"
           :key="index"
         >
-          <el-form-item :label="item.label" v-if="item.type === 'date'">
-            <el-date-picker
-              v-model="seekData[item.prop]"
-              :type="item.dateType"
-              :placeholder="'选择' + item.label"
-              size="mini"
-              range-separator="至"
-              :start-placeholder="'开始' + item.label"
-              :end-placeholder="'结束' + item.label"
-              :picker-options="item.pickerOptions"
-              :value-format="item.format"
-            >
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item :label="item.label" v-if="item.type === 'cascader'">
-            <el-cascader
-              v-model="seekData[item.prop]"
-              :clearable="true"
-              size="mini"
-              :placeholder="'请选择' + item.label"
-              :options="item.option"
-              filterable
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item :label="item.label" v-else-if="item.type === 'text'">
-            <el-input
-              v-model="seekData[item.prop]"
-              clearable
-              show-word-limit
-              size="mini"
-              :maxlength="item.maxlength"
-              :placeholder="'请输入' + item.label"
-            />
-          </el-form-item>
-          <el-form-item :label="item.label" v-else-if="item.type === 'select'">
-            <el-select
-              v-model="seekData[item.prop]"
-              :placeholder="'请选择' + item.label"
-              size="mini"
-              filterable
-              :clearable="true"
-            >
-              <el-option
-                v-for="item in item.option"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+          <div v-if="item.searchHidden !== true">
+            <el-form-item :label="item.label" v-if="item.type === 'date'">
+              <el-date-picker
+                v-model="seekData[item.prop]"
+                :type="item.dateType"
+                :placeholder="'选择' + item.label"
+                size="mini"
+                range-separator="至"
+                :start-placeholder="'开始' + item.label"
+                :end-placeholder="'结束' + item.label"
+                :picker-options="item.pickerOptions"
+                :value-format="item.format"
+              >
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item :label="item.label" v-if="item.type === 'cascader'">
+              <el-cascader
+                v-model="seekData[item.prop]"
+                :clearable="true"
+                size="mini"
+                :placeholder="'请选择' + item.label"
+                :options="item.option"
+                filterable
+              ></el-cascader>
+            </el-form-item>
+            <el-form-item :label="item.label" v-else-if="item.type === 'text'">
+              <el-input
+                v-model="seekData[item.prop]"
+                clearable
+                show-word-limit
+                size="mini"
+                :maxlength="item.maxlength"
+                :placeholder="'请输入' + item.label"
               />
-            </el-select>
-          </el-form-item>
+            </el-form-item>
+            <el-form-item
+              :label="item.label"
+              v-else-if="item.type === 'select'"
+            >
+              <el-select
+                v-model="seekData[item.prop]"
+                :placeholder="'请选择' + item.label"
+                size="mini"
+                filterable
+                :clearable="true"
+              >
+                <el-option
+                  v-for="item in item.option"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
         </div>
         <el-form-item class="seek-form-box">
-          <span v-for="(item, index) in modelConf.buttonConf" :key="index">
+          <span v-for="(item, index) in modelConf.requestConf" :key="index">
             <el-button
               size="mini"
               type="primary"
@@ -86,6 +97,17 @@
               v-if="item.type === 'search' && item.isShow"
             >
               {{ item.label }}
+            </el-button>
+          </span>
+          <span>
+            <el-button
+              @click="resetForm('searchForm')"
+              size="mini"
+              icon="el-icon-refresh-left"
+              class="reset-form-but"
+              plain
+            >
+              重置
             </el-button>
           </span>
         </el-form-item>
@@ -101,6 +123,7 @@
           style="width: 100%"
           :max-height="modelConf.viewConf.tableMaxHeight"
           @selection-change="selectFn"
+          v-loading="isTableLoading"
         >
           <el-table-column type="selection" width="40" />
           <el-table-column
@@ -138,22 +161,29 @@
                 v-model="scope.row[item.prop]"
                 :active-text="item.activeText"
                 :inactive-text="item.inactiveText"
-                :active-value="item.activeValue[0].code"
-                :inactive-value="item.inactiveValue[0].code"
-                :active-color="item.activeColor || '#13ce66'"
-                :inactive-color="item.inactiveColor || '#ff4949'"
-                @change="changeStatus(scope.row, item)"
+                :active-value="item.activeValue"
+                :inactive-value="item.inactiveValue"
+                :active-color="item.activeColor"
+                :inactive-color="item.inactiveColor"
+                @change="
+                  (index) =>
+                    onDialogForm(scope.row, getReqCof(item.prop), index)
+                "
               />
               <div v-else-if="item.type === 'operation'">
                 <div
-                  v-for="(butItem, index) in modelConf.buttonConf"
+                  v-for="(butItem, index) in modelConf.requestConf"
                   :key="index"
                   class="table-but"
                 >
                   <div
                     placement="top"
                     effect="light"
-                    v-if="butItem.type === 'table' && butItem.isShow(scope.row)"
+                    v-if="
+                      butItem.type === 'table' &&
+                      butItem.isShow(scope.row) &&
+                      !butItem.prop
+                    "
                   >
                     <!-- <div slot="content">{{ butItem.label }}</div> -->
                     <el-button
@@ -234,7 +264,7 @@ import { setModelConf } from "./index";
 export default {
   name: "GeneralModel",
   props: {
-    buttonConf: { type: Array, default: () => [] },
+    requestConf: { type: Array, default: () => [] },
     tableConf: { type: Array, default: () => [] },
     formConf: { type: Array, default: () => [] },
   },
@@ -242,6 +272,8 @@ export default {
   components: { WindowModule },
   data() {
     return {
+      isSearchLoading: false, // 是否负载搜索区
+      isTableLoading: false, // 是否负载表格
       tableData: [], // 列表内容
       isShowWindow: false, // 弹窗状态
       pageTotal: 0, // 数据总数
@@ -252,11 +284,6 @@ export default {
       isReqLoading: false, // 查询等待
       roleList: [],
       dialogFormData: {},
-      previewData: {
-        title: "",
-        data: "",
-        isShow: false,
-      },
       topSort: {
         isShow: false,
         title: "置顶排序",
@@ -279,7 +306,7 @@ export default {
   computed: {
     modelConf() {
       return setModelConf({
-        buttonConf: this.buttonConf,
+        requestConf: this.requestConf,
         tableConf: this.tableConf,
         formConf: this.formConf,
       });
@@ -295,89 +322,116 @@ export default {
     },
     // 获取数据
     getListDataFn(seekData) {
-      const api = this.modelConf.buttonConf.filter(
-        (item) => item.name === "search"
-      )[0].requestModel;
-      let queryData = api.requestData(seekData);
-      api
-        .requestFn(queryData)
-        .then(async (Response) => {
-          const res = api.responseData(Response);
-          this.isReqLoading = false; // 查询等待
-          if (res.code === 0) {
-            this.pageTotal = res.total;
-            this.tableData = res.list;
-          } else {
-            this.$message({
-              showClose: true,
-              message: res.msg,
-              type: "error",
-            });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    async changeStatus(row, item) {
-      for (let i in item.activeValue) {
-        if (item.activeValue[i].code == row[item.prop]) {
-          this.switchDialog.title = `是否${item.activeText}`;
-        }
-      }
-      for (let i in item.inactiveValue) {
-        if (item.inactiveValue[i].code == row[item.prop]) {
-          this.switchDialog.title = `是否${item.inactiveText}`;
-        }
-      }
-      this.editList = row;
-      this.editSwitch = item;
-      const { requestFn, responseData, requestData, specialValue } =
-        this.editSwitch.queryOneData.requestModel;
-      requestFn(await requestData(this.editList))
-        .then(async (res) => {
-          const _res = await responseData(res);
-          if (_res.code === 0) {
-            if (specialValue.length > 0) {
-              for (let i in specialValue) {
-                this.editList[specialValue[i].value] =
-                  _res.data[specialValue[i].value];
-              }
+      this.isSearchLoading = true;
+      try {
+        const api = this.modelConf.requestConf.filter(
+          (item) => item.name === "search"
+        )[0].requestModel;
+        let queryData = api.requestData(seekData);
+        api
+          .requestFn(queryData)
+          .then(async (Response) => {
+            this.isSearchLoading = false;
+            const res = api.responseData(Response);
+            this.isReqLoading = false; // 查询等待
+            if (res.code === 0) {
+              this.pageTotal = res.total;
+              this.tableData = res.list;
+            } else {
+              this.$message({
+                showClose: true,
+                message: res.msg,
+                type: "error",
+              });
             }
-          } else {
-            this.$message({
-              showClose: true,
-              message: res.msg,
-              type: "error",
-            });
-          }
-        })
-        .finally(() => {});
-      this.switchFlag = true;
+          })
+          .catch((err) => {
+            this.isSearchLoading = false;
+            console.error(err);
+          });
+      } catch (err) {
+        console.log(err);
+        this.$message({
+          showClose: true,
+          message: "配置失败，请确保使用正确性！",
+          type: "error",
+        });
+        this.isSearchLoading = false;
+      }
+    },
+    // 重置
+    resetForm(formName) {
+      this.seekData = {
+        pageNum: 1,
+        pageSize: 10,
+      };
+      this.$nextTick(() => {
+        this.$refs[formName].resetFields();
+      });
+      // this.$nextTick(function () {
+      //   console.log(this.$refs[formName]);
+      // });
     },
     // 列表组件 - 修改
-    onDialogForm(item, butConf) {
-      this.modelConf.butRequestModel = butConf.requestModel;
-      if (butConf.name === "update") {
-        this.addOrSet = 2;
-        this.isShowWindow = true;
-        this.dialogFormData = Object.assign({}, item);
-      } else if (butConf.name === "add") {
+    async onDialogForm(item, requestConf) {
+      const {
+        name, // 名称
+        remindWinConf, // 确认框配置
+        isShowRemindWin, // 是否有确认框
+        requestModel, // 操作数据请求
+        queryOneModel, // 查询单条数据请求
+      } = requestConf;
+      if (name === "update") {
+        // 如果有queryOneModel，会进行先进行查询
+        if (queryOneModel) {
+          this.isTableLoading = true;
+          try {
+            const requestData = queryOneModel.requestData(item); // 请求数据
+            const responseData = await queryOneModel.requestFn(requestData); // 返回数据
+            const res = queryOneModel.responseData(responseData); // 返回数据处理
+            this.isTableLoading = false;
+            if (res.code === 0) {
+              this.addOrSet = 2;
+              this.isShowWindow = true;
+              this.dialogFormData = Object.assign({}, res.data);
+              this.modelConf.butRequestModel = requestModel;
+            } else {
+              this.$message({
+                showClose: true,
+                message: res.msg,
+                type: "error",
+              });
+            }
+          } catch (err) {
+            console.log(err);
+            this.$message({
+              showClose: true,
+              message: "配置失败，请确保使用正确性！",
+              type: "error",
+            });
+            this.isTableLoading = false;
+          }
+        } else {
+          this.addOrSet = 2;
+          this.isShowWindow = true;
+          this.dialogFormData = Object.assign({}, item);
+          this.modelConf.butRequestModel = requestModel;
+        }
+      } else if (name === "add") {
         this.addOrSet = 1;
         this.isShowWindow = true;
         this.dialogFormData = Object.assign({}, this.modelConf.formData);
-      } else if (butConf.name === "preview") {
-        this.previewData = {
-          title: "预览",
-          isShow: true,
-          data: item,
-          butConf: butConf,
-        };
-      } else if (butConf.isShowRemindWin !== false) {
-        this.centerDialogVisible = true;
+        this.modelConf.butRequestModel = requestModel;
+      } else if (isShowRemindWin !== false) {
+        if (requestConf) this.centerDialogVisible = true;
         this.remindWinData = item;
-        this.remindWinConf = butConf.remindWinConf;
+        this.remindWinConf = remindWinConf;
       }
+    },
+    getReqCof(val) {
+      const reqConf = this.requestConf.filter((e) => e.prop === val);
+      if (reqConf.length > 0) return reqConf[0];
+      return {};
     },
     // 表格选择监听
     selectFn(data) {

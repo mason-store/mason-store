@@ -150,6 +150,7 @@
                 v-if="item.type === 'richtext'"
               >
                 <Tinymce
+                  v-if="showWindow"
                   v-model="winFormData[item.prop]"
                   :config="item"
                   :requestModel="item.requestModel"

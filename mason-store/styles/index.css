@@ -25,6 +25,10 @@
   float: left;
 }
 
+.el-button.reset-form-but {
+  margin-left: 10px;
+}
+
 .page {
   margin-top: 20px;
 }

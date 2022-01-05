@@ -117,6 +117,37 @@ const deleteRes = { code: 0, msg: '删除成功' }
 const editRes = { code: 0, msg: '编辑成功' }
 const addRes = { code: 0, msg: '编辑成功' }
 const uploadRes = { code: 0, msg: '上传成功', data: { url: img } }
+const oneRes = {
+  code: 0,
+  data: {
+    list: [
+      {
+        infoId: 'xinwen24185u',
+        createDate: '2021-04-21 15:51:47',
+        updateDate: '2021-04-22 14:31:38',
+        infoTitle: '13',
+        infoSubtitle: null,
+        infoSketch: null,
+        infoContent: '<!DOCTYPE html>\n<html>\n<head>\n</head>\n<body>\n<p>fwqr且无法对</p>\n</body>\n</html>',
+        infoImgs: [img],
+        infoReleaseTime: '2021-04-06T16:00:00.000Z',
+        infoLikesNumber: 5,
+        infoDiscussNumber: 3,
+        infoRelStatus: '1',
+        infoTopRelStatus: '1',
+        infoType: 'a',
+        infoRemarks: '13',
+        _id: '607fd993ac73582ad9ba42b6',
+        __v: 0,
+        userId: null,
+      },
+    ],
+    total: 1,
+    pageNum: 1,
+    pageSize: 10,
+  },
+  msg: '获取成功',
+}
 router.get('/', (req, res) => { res.json({ code: 0, msg: '连接成功！' }) })
 router.get(`/img/cat.jpg`, function (req, res) {
   res.header('Content-Type', 'image/png')
@@ -127,6 +158,8 @@ router.post('/delete', (req, res) => { res.json(deleteRes) })
 router.post('/edit', (req, res) => { res.json(editRes) })
 router.post('/add', (req, res) => { res.json(addRes) })
 router.post('/upload', (req, res) => { res.json(uploadRes) })
+router.post('/queryOne', (req, res) => { res.json(oneRes) })
+
 app.use(router)
 app.listen(port, () => {
   console.log(`服务地址：http://127.0.0.1:${port}`);

@@ -47,6 +47,17 @@ export function sysmanageAdminList(data) {
   });
 }
 
+/**
+ * 查询一条
+ */
+export function sysmanageAdminQueryOne(data) {
+  return request({
+    url: "/queryOne",
+    method: "post",
+    data
+  });
+}
+
 // 上传接口
 export const uploadOnePhotoUrl = () => {
   return bashUrl + '/upload'

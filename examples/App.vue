@@ -1,13 +1,11 @@
 <template>
   <div class="test">
-    <!-- 缺失刷新功能，switch、upload优化，富文本内容没清空 -->
     <Integration
       v-if="asyncComponent"
-      :buttonConf="buttonConf"
+      :requestConf="requestConf"
       :tableConf="tableConf"
       :formConf="formConf"
     >
-      <!-- <Integration> -->
       <!-- 主按钮区域（即'新增'按钮所在的那块区域） -->
       <template slot="mainbuts">
         <el-button
@@ -34,11 +32,12 @@
           预览
         </el-button>
       </template>
+      <!-- 新增/编辑表单 -->
       <template slot="dialogForm" slot-scope="data">
         <el-form label-width="80px">
           <el-form-item label="描述">
             <el-input
-              v-model="data.formData.infoSketch"
+              v-model="data.formData.infoDiscussNumber"
               :placeholder="'请输入描述'"
               show-word-limit
               clearable
@@ -49,6 +48,7 @@
           </el-form-item>
         </el-form>
       </template>
+      <!-- 新增/编辑按钮 -->
       <template slot="dialogButton" slot-scope="data">
         <el-button
           @click="onPreview(data)"
@@ -61,6 +61,7 @@
         </el-button>
       </template>
     </Integration>
+    <!-- 此处自定义弹窗，非必要 -->
     <div>
       <el-dialog
         title="自定义对话框"
@@ -93,12 +94,16 @@
 // import 'mason-store/lib/mason-store.css'
 import { Integration } from "../mason-store/index";
 import "../mason-store/styles/index.css";
+// import { Integration } from "../lib/mason-store.umd";
+// import "../lib/mason-store.css";
 import * as requestModel from "./api";
 import {
   disposeList,
   disposeAdd,
   disposeUpdate,
   disposeDelete,
+  disposeQueryOne,
+  disposeUpload,
 } from "./App.js";
 import axios from "axios";
 // 数据字段 - 性别
@@ -126,7 +131,7 @@ export default {
       isShowPreview: false, // 自定义预览，非必须
       asyncComponent: true, // 异步组件，在准备就绪再显示，主要配合数据字典使用。
       // 按钮配置
-      buttonConf: [
+      requestConf: [
         {
           name: "add",
           type: "main",
@@ -162,6 +167,11 @@ export default {
             requestData: (req) => disposeUpdate.requestParams(req),
             responseData: (res) => disposeUpdate.response(res),
           },
+          queryOneModel: {
+            requestFn: requestModel.sysmanageAdminQueryOne,
+            requestData: (req) => disposeQueryOne.requestParams(req),
+            responseData: (res) => disposeQueryOne.response(res),
+          },
         },
         {
           name: "delete",
@@ -179,6 +189,36 @@ export default {
             requestFn: requestModel.sysmanageAdminDelete,
             requestData: (req) => disposeDelete.requestParams(req),
             responseData: (res) => disposeDelete.response(res),
+          },
+        },
+        {
+          name: "switch",
+          type: "table",
+          label: "发布状态",
+          prop: "infoSketch",
+          icon: "el-icon-delete",
+          isShow: (item) => true,
+          remindWinConf: {
+            title: "修改状态提示！",
+            msg: "您确定要操作这条数据？",
+            code: "delete",
+          },
+          isShowRemindWin: true,
+          requestModel: {
+            requestFn: requestModel.sysmanageAdminDelete,
+            requestData: (req) => disposeDelete.requestParams(req),
+            responseData: (res) => disposeDelete.response(res),
+          },
+        },
+        {
+          name: "upload",
+          type: "dialog",
+          label: "上传图片",
+          requestModel: {
+            requestFn: requestModel.uploadOnePhotoUrl(),
+            uploadName: "file",
+            uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
+            responseData: (res) => disposeUpload.response(res),
           },
         },
       ],
@@ -199,58 +239,10 @@ export default {
           label: "发布状态",
           type: "switch",
           prop: "infoSketch",
-          activeColor: "",
-          inactiveColor: "",
           activeValue: "1",
           inactiveValue: "2",
-          activeText: "启用",
-          inactiveText: "停用",
           width: 140,
           fiexd: "right",
-          requestModel: {
-            requestFn: requestModel.sysmanageAdminEdit,
-            requestData: async (req, model) => {
-              const reqData = {
-                infoSketch: req.infoSketch,
-                infoId: req.infoId,
-              };
-              return reqData;
-            },
-            responseData: (res) => {
-              let newRes = {};
-              if (res.code === 0) {
-                newRes = { code: 0, msg: response.msg };
-              } else {
-                newRes = { code: 1, msg: response.msg };
-              }
-              return newRes;
-            },
-          },
-          queryOneData: {
-            requestModel: {
-              specialValue: [{ value: "content" }],
-              requestFn: requestModel.sysmanageAdminEdit,
-              requestData: (req) => {
-                return { id: req.id };
-              },
-              responseData: (res) => {
-                let _res = {};
-                if (res.code === 200) {
-                  _res = {
-                    code: 0,
-                    msg: res.msg,
-                    data: res.data,
-                  };
-                } else {
-                  _res = {
-                    code: 1,
-                    msg: res.msg,
-                  };
-                }
-                return _res;
-              },
-            },
-          },
         },
         { label: "操作", type: "operation", width: 280, fiexd: "right" },
       ],
@@ -281,7 +273,7 @@ export default {
         {
           label: "备注",
           prop: "infoRemarks",
-          isSeek: false,
+          searchHidden: true,
           maxlength: 200,
           span: 12,
         },
@@ -289,56 +281,9 @@ export default {
           label: "封面图片",
           prop: "infoImgs",
           type: "img",
-          isSeek: false,
-          requestModel: {
-            requestFn: requestModel.uploadOnePhotoUrl(),
-            uploadName: "file",
-            uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
-            requestData: (req) => {
-              return req;
-            },
-            responseData: (response) => {
-              console.log(response);
-              let res = {};
-              if (response.code === 0) {
-                res = {
-                  code: 0,
-                  msg: response.msg,
-                  path: response.data.url,
-                  data: response.data,
-                };
-              } else {
-                res = { code: 1, msg: response.msg };
-              }
-              return res;
-            },
-          },
+          searchHidden: true,
         },
-        {
-          label: "文章内容",
-          type: "richtext",
-          prop: "infoContent",
-          limit: 3,
-          requestModel: {
-            requestFn: requestModel.uploadOnePhotoUrl(),
-            uploadName: "file",
-            uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
-            responseData: (response) => {
-              let res = {};
-              if (response.code === 0) {
-                res = {
-                  code: 0,
-                  msg: response.msg,
-                  path: response.data.url,
-                  data: response.data,
-                };
-              } else {
-                res = { code: 1, msg: response.msg };
-              }
-              return res;
-            },
-          },
-        },
+        { label: "文章内容", type: "richtext", prop: "infoContent", limit: 3 },
       ],
     };
   },
