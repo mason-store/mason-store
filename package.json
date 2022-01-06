@@ -1,6 +1,6 @@
 {
   "name": "mason-store",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": false,
   "scripts": {
     "dev": "vue-cli-service serve",
