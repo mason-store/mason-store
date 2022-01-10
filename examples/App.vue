@@ -97,15 +97,6 @@ import "../mason-store/styles/index.css";
 // import { Integration } from "../lib/mason-store.umd";
 // import "../lib/mason-store.css";
 import * as requestModel from "./api";
-import {
-  disposeList,
-  disposeAdd,
-  disposeUpdate,
-  disposeDelete,
-  disposeQueryOne,
-  disposeUpload,
-} from "./App.js";
-import axios from "axios";
 // 数据字段 - 性别
 const genderOption = [
   {
@@ -132,6 +123,7 @@ export default {
       asyncComponent: true, // 异步组件，在准备就绪再显示，主要配合数据字典使用。
       // 按钮配置
       requestConf: [
+        // 新增
         {
           name: "add",
           type: "main",
@@ -140,10 +132,19 @@ export default {
           isShow: (item) => true,
           requestModel: {
             requestFn: requestModel.sysmanageAdminAdd,
-            requestData: (req) => disposeAdd.requestParams(req),
-            responseData: (res) => disposeAdd.response(res),
+            requestData: (request) => request,
+            responseData: (response) => {
+              let res = {};
+              if (response.code === 0) {
+                res = { code: 0, msg: response.msg };
+              } else {
+                res = { code: 1, msg: response.msg };
+              }
+              return res;
+            },
           },
         },
+        // 查询
         {
           name: "search",
           type: "search",
@@ -152,10 +153,106 @@ export default {
           isShow: (item) => true,
           requestModel: {
             requestFn: requestModel.sysmanageAdminList,
-            requestData: (req) => disposeList.requestParams(req),
-            responseData: (res) => disposeList.response(res),
+            requestData: (request) => {
+              let req = {};
+              Object.keys(request).forEach((name) => {
+                if (name !== "releaseTime") {
+                  req[name] = request[name];
+                }
+              });
+              if (request.columns) {
+                req.engFirstColumn = request.columns[0];
+                req.engSecondColumn = request.columns[1];
+              }
+              return req;
+            },
+            responseData: (response) => {
+              let res = {};
+              if (response.code === 0) {
+                response.data.list.forEach((e, index) => {
+                  e.contentTxt = e.content;
+                  // 设置状态
+                  e.infoRelStatusL = [];
+                  if (e.infoRelStatus == "0") {
+                    e.infoRelStatusL[0] = {
+                      label: "未发布",
+                      type: "danger",
+                    };
+                  } else if (e.infoRelStatus == "1") {
+                    e.infoRelStatusL[0] = {
+                      label: "已发布",
+                      type: "success",
+                    };
+                  } else if (e.infoRelStatus == "2") {
+                    e.infoRelStatusL[0] = {
+                      label: "已下线",
+                      type: "info",
+                    };
+                  } else {
+                    e.infoRelStatusL[0] = {
+                      label: "未知状态",
+                      type: "",
+                    };
+                  }
+                  // 文章类型
+                  e.infoTypeL = [];
+                  if (e.infoType == "a") {
+                    e.infoTypeL[0] = {
+                      label: "公告",
+                      type: "danger",
+                    };
+                  } else if (e.infoType == "b") {
+                    e.infoTypeL[0] = {
+                      label: "论坛",
+                      type: "success",
+                    };
+                  } else if (e.infoType == "c") {
+                    e.infoTypeL[0] = {
+                      label: "文章",
+                      type: "",
+                    };
+                  } else {
+                    e.infoTypeL[0] = {
+                      label: "未知状态",
+                      type: "info",
+                    };
+                  }
+                  e.infoTopRelStatusL = [];
+                  if (e.infoTopRelStatus == "0") {
+                    e.infoTopRelStatusL[0] = {
+                      label: "否",
+                      type: "",
+                    };
+                  } else if (e.infoTopRelStatus == "1") {
+                    e.infoTopRelStatusL[0] = {
+                      label: "是",
+                      type: "danger",
+                    };
+                  } else {
+                    e.infoTopRelStatusL[0] = {
+                      label: "未知",
+                      type: "info",
+                    };
+                  }
+                  e.infoImgsT = [...(e.infoImgs || [])];
+                });
+                res = {
+                  code: 0,
+                  list: response.data.list,
+                  total: response.data.total,
+                  msg: response.msg,
+                };
+              } else {
+                res = {
+                  code: 1,
+                  msg: response.msg,
+                };
+              }
+              return res;
+            },
           },
         },
+        // 编辑
         {
           name: "update",
           type: "table",
@@ -164,33 +261,62 @@ export default {
           isShow: (item) => true,
           requestModel: {
             requestFn: requestModel.sysmanageAdminEdit,
-            requestData: (req) => disposeUpdate.requestParams(req),
-            responseData: (res) => disposeUpdate.response(res),
+            requestData: (req) => req,
+            responseData: (response) => {
+              let res = {};
+              if (response.code === 0) {
+                res = { code: 0, msg: response.msg };
+              } else {
+                res = { code: 1, msg: response.msg };
+              }
+              return res;
+            },
           },
           queryOneModel: {
             requestFn: requestModel.sysmanageAdminQueryOne,
-            requestData: (req) => disposeQueryOne.requestParams(req),
-            responseData: (res) => disposeQueryOne.response(res),
+            requestData: (request) => ({ infoId: request.infoId }),
+            responseData: (response) => {
+              let res = response;
+              if (res.code === 0) {
+                res = {
+                  code: 0,
+                  data: response.data.list[0],
+                  msg: response.msg,
+                };
+              }
+              return res;
+            },
           },
         },
+        // 删除
         {
           name: "delete",
           type: "table",
           label: "删除",
           icon: "el-icon-delete",
           isShow: (item) => true,
-          remindWinConf: {
-            title: "删除警告！",
-            msg: "您确定要删除这条数据？",
-            code: "delete",
-          },
+          remindWinConf: (item) => ({
+            title: '修改是否置顶状态！',
+            msg: `您确定要删除这条数据？`,
+            code: 'switch'
+          }),
           isShowRemindWin: true,
           requestModel: {
             requestFn: requestModel.sysmanageAdminDelete,
-            requestData: (req) => disposeDelete.requestParams(req),
-            responseData: (res) => disposeDelete.response(res),
+            requestData: (request) => ({ infoId: request.infoId }),
+            responseData: (response) => {
+              let res = response;
+              if (res.code === 0) {
+                res = {
+                  code: 0,
+                  msg: response.msg,
+                };
+              }
+              return res;
+            },
           },
         },
+        // 发布状态
         {
           name: "switch",
           type: "table",
@@ -198,18 +324,36 @@ export default {
           prop: "infoSketch",
           icon: "el-icon-delete",
           isShow: (item) => true,
-          remindWinConf: {
-            title: "修改状态提示！",
-            msg: "您确定要操作这条数据？",
-            code: "delete",
+          remindWinConf: (item) => {
+            console.log(item)
+            const state = item.infoSketch
+            return {
+              title: '操作提示！',
+              msg: `您确定要${state == '0' ? '禁用' : state == '1' ? '启用' : '操作'
+                }这条数据？`,
+              code: 'switch',
+            }
           },
           isShowRemindWin: true,
           requestModel: {
             requestFn: requestModel.sysmanageAdminDelete,
-            requestData: (req) => disposeDelete.requestParams(req),
-            responseData: (res) => disposeDelete.response(res),
+            requestData: (request) => ({
+              infoId: request.infoId,
+              infoSketch: request.infoSketch,
+              type: 'top',
+            }),
+            responseData: (response) => {
+              let _res = {}
+              if (response.code === 0) {
+                _res = { code: 0, msg: response.msg }
+              } else {
+                _res = { code: 1, msg: response.msg }
+              }
+              return _res
+            },
           },
         },
+        // 上传图片
         {
           name: "upload",
           type: "dialog",
@@ -218,7 +362,20 @@ export default {
             requestFn: requestModel.uploadOnePhotoUrl(),
             uploadName: "file",
             uploadHeaders: requestModel.uploadHeaders(), // 上传头部数据
-            responseData: (res) => disposeUpload.response(res),
+            responseData: (response) => {
+              let res = {};
+              if (response.code === 0) {
+                res = {
+                  code: 0,
+                  msg: response.msg,
+                  path: response.data.url,
+                  data: response.data,
+                };
+              } else {
+                res = { code: 1, msg: response.msg };
+              }
+              return res;
+            },
           },
         },
       ],
@@ -293,7 +450,6 @@ export default {
       this.isShowPreview = true;
     },
   },
-  created() {},
 };
 </script>
 

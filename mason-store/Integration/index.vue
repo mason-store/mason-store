@@ -167,7 +167,7 @@
                 :inactive-color="item.inactiveColor"
                 @change="
                   (index) =>
-                    onDialogForm(scope.row, getReqCof(item.prop), index)
+                    onDialogForm(scope.row, getReqCof(item.prop), index, item)
                 "
               />
               <div v-else-if="item.type === 'operation'">
@@ -368,12 +368,9 @@ export default {
       this.$nextTick(() => {
         this.$refs[formName].resetFields();
       });
-      // this.$nextTick(function () {
-      //   console.log(this.$refs[formName]);
-      // });
     },
     // 列表组件 - 修改
-    async onDialogForm(item, requestConf) {
+    async onDialogForm(item, requestConf, index, conf) {
       const {
         name, // 名称
         remindWinConf, // 确认框配置
@@ -425,9 +422,19 @@ export default {
       } else if (isShowRemindWin !== false) {
         if (requestConf) this.centerDialogVisible = true;
         this.remindWinData = item;
-        this.remindWinConf = remindWinConf;
+        const titleConf = {
+          title: '操作提示！',
+          msg: '您确定要操作这条数据？'
+        }
+        const dialogConf = typeof remindWinConf == 'function' ? remindWinConf(item) : titleConf
+        this.remindWinConf = {
+          ...dialogConf,
+          requestModel: requestModel,
+          switchVal: index
+        };
       }
     },
+    // 获取请求配置
     getReqCof(val) {
       const reqConf = this.requestConf.filter((e) => e.prop === val);
       if (reqConf.length > 0) return reqConf[0];
@@ -451,27 +458,31 @@ export default {
     },
     // 弹窗 - 确定
     confirmDeleteFn() {
-      const brModel = this.modelConf.butRequestModel;
-      if (brModel) {
-        const { requestFn, responseData, requestData } = brModel;
-        requestFn(requestData(this.remindWinData)).then(async (res) => {
-          const _res = await responseData(res);
-          if (_res.code === 0) {
-            this.$message({
-              showClose: true,
-              message: res.msg,
-              type: "success",
-            });
-            this.getListDataFn(this.seekData);
-            this.centerDialogVisible = false;
-          } else {
-            this.$message({
-              showClose: true,
-              message: res.msg,
-              type: "error",
-            });
-          }
-        });
+      const { requestModel, switchVal } = this.remindWinConf
+      if (requestModel) {
+        const { requestFn, responseData, requestData } = requestModel;
+        requestFn(requestData({ ...this.remindWinData, tableSwitchChangeValue: switchVal }))
+          .then(async (res) => {
+            const _res = await responseData(res);
+            if (_res.code === 0) {
+              this.$message({
+                showClose: true,
+                message: res.msg,
+                type: "success",
+              });
+              this.getListDataFn(this.seekData);
+              this.centerDialogVisible = false;
+            } else {
+              this.$message({
+                showClose: true,
+                message: res.msg,
+                type: "error",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
     // 弹窗 - 取消删除
