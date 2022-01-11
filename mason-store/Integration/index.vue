@@ -138,38 +138,49 @@
           >
             <template slot-scope="scope">
               <div v-if="item.type == 'tag'">
-                <el-tag
-                  v-for="(tagItem, tagIndex) in scope.row[item.prop]"
-                  :key="tagIndex"
-                  :type="tagItem.type"
-                  class="common-table-tag"
-                >
-                  {{ tagItem.label }}
-                </el-tag>
+                <span v-if="Array.isArray(scope.row[item.prop])">
+                  <el-tag
+                    v-for="(tagItem, tagIndex) in scope.row[item.prop]"
+                    :key="tagIndex"
+                    :type="tagItem.type"
+                    class="common-table-tag"
+                  >
+                    {{ tagItem.label }}
+                  </el-tag>
+                </span>
+                <span v-else>标签格式错误（Array）</span>
               </div>
-              <el-image
-                v-else-if="item.type == 'img'"
-                style="width: 100%; height: auto"
-                :src="scope.row[item.prop][0]"
-                fit="contain"
-              >
-              </el-image>
-              <el-switch
-                v-else-if="item.type == 'switch'"
-                style="display: block"
-                :key="index"
-                v-model="scope.row[item.prop]"
-                :active-text="item.activeText"
-                :inactive-text="item.inactiveText"
-                :active-value="item.activeValue"
-                :inactive-value="item.inactiveValue"
-                :active-color="item.activeColor"
-                :inactive-color="item.inactiveColor"
-                @change="
-                  (index) =>
-                    onDialogForm(scope.row, getReqCof(item.prop), index, item)
-                "
-              />
+              <div v-else-if="item.type == 'img'">
+                <span v-if="Array.isArray(scope.row[item.prop])">
+                  <el-image
+                    v-for="(imgItem, imgIndex) in scope.row[item.prop]"
+                    style="width: 100%; height: auto"
+                    fit="contain"
+                    :key="imgIndex"
+                    :preview-src-list="scope.row[item.prop]"
+                    :z-index="imgIndex"
+                    :src="imgItem"
+                  />
+                </span>
+                <span v-else>图片格式错误（Array）</span>
+              </div>
+              <div v-else-if="item.type == 'switch'" class="table-switch">
+                <el-switch
+                  style="display: block"
+                  :key="index"
+                  v-model="scope.row[item.prop]"
+                  :active-text="item.activeText"
+                  :inactive-text="item.inactiveText"
+                  :active-value="item.activeValue"
+                  :inactive-value="item.inactiveValue"
+                  :active-color="item.activeColor"
+                  :inactive-color="item.inactiveColor"
+                  @change="
+                    (index) =>
+                      onDialogForm(scope.row, getReqCof(item.prop), index, item)
+                  "
+                />
+              </div>
               <div v-else-if="item.type === 'operation'">
                 <div
                   v-for="(butItem, index) in modelConf.requestConf"

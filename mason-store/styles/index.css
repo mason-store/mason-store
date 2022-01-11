@@ -58,15 +58,17 @@
 }
 
 .general-dialog .dialog-img {
-  border-radius: 8px;
   position: relative;
   overflow: hidden;
   width: 120px;
   height: 120px;
   float: left;
-  border: 1px solid #eee;
   margin-right: 10px;
   margin-top: 10px;
+}
+
+.table-switch {
+  padding: 3px 0;
 }
 
 .cancel {
@@ -95,11 +97,12 @@
 
 .general-dialog .dialog-img .el-image {
   width: 120px;
+  height: auto;
 }
 
 .el-image {
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .general-dialog .dialog-img:nth-of-type(3n) {

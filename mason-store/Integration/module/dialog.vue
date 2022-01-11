@@ -18,9 +18,10 @@
         >
           <el-row>
             <el-col
-              :span="item.span"
               v-for="(item, index) in modelConf.formConfig"
+              :span="item.span"
               :key="index"
+              v-show="item.dialogHidden === false"
             >
               <div v-if="item.type === 'form-title'">
                 <el-divider>{{ item.label }}</el-divider>
@@ -64,11 +65,12 @@
                 <el-radio
                   v-model="winFormData[item.prop]"
                   size="mini"
-                  v-for="item in item.option"
-                  :key="item.value"
-                  :label="item.value"
-                  >{{ item.label }}</el-radio
+                  v-for="radioItem in item.option"
+                  :key="radioItem.value"
+                  :label="radioItem.value"
                 >
+                  {{ radioItem.label }}
+                </el-radio>
               </el-form-item>
               <el-form-item
                 :label="item.label"

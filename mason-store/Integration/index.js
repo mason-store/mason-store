@@ -46,6 +46,7 @@ export const setModelConf = (data) => {
     // 单独处理图片或富文本上传图片配置
     if (formParamsConf.type === 'img' || formParamsConf.type === 'richtext') {
       const uploadConf = data.requestConf.filter(e => e.type === 'dialog')
+      // 把请求方法放在表单配置里
       if (uploadConf.length > 0) formParamsConf.requestModel = uploadConf[0].requestModel
     }
     // 表单配置
