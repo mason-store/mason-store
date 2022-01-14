@@ -269,9 +269,11 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import WindowModule from "./module/dialog.vue"; // 新增＆编辑
 import { setModelConf } from "./index";
-
+import { Message, Image, Loading, Switch, Upload, Tag, Button, Dialog, Input, Radio, Select, Table, FormItem, Form, Option, DatePicker, TableColumn, Pagination, Row, Col, } from 'element-ui'
+Vue.use(Tag).use(Image).use(Loading).use(Switch).use(Upload).use(Button).use(Dialog).use(Input).use(Radio).use(Select).use(Table).use(FormItem).use(Form).use(Option).use(DatePicker).use(TableColumn).use(Pagination).use(Row).use(Col)
 export default {
   name: "GeneralModel",
   props: {
@@ -349,7 +351,7 @@ export default {
               this.pageTotal = res.total;
               this.tableData = res.list;
             } else {
-              this.$message({
+              Message({
                 showClose: true,
                 message: res.msg,
                 type: "error",
@@ -357,16 +359,16 @@ export default {
             }
           })
           .catch((err) => {
+            this.isReqLoading = false; // 查询等待
             this.isSearchLoading = false;
-            console.error(err);
           });
       } catch (err) {
-        console.log(err);
-        this.$message({
+        Message({
           showClose: true,
-          message: "配置失败，请确保使用正确性！",
+          message: `配置失败，请确保使用正确性！${err}`,
           type: "error",
         });
+        this.isReqLoading = false; // 查询等待
         this.isSearchLoading = false;
       }
     },
@@ -404,7 +406,7 @@ export default {
               this.dialogFormData = Object.assign({}, res.data);
               this.modelConf.butRequestModel = requestModel;
             } else {
-              this.$message({
+              Message({
                 showClose: true,
                 message: res.msg,
                 type: "error",
@@ -412,9 +414,9 @@ export default {
             }
           } catch (err) {
             console.log(err);
-            this.$message({
+            Message({
               showClose: true,
-              message: "配置失败，请确保使用正确性！",
+              message: `配置失败，请确保使用正确性！${err}`,
               type: "error",
             });
             this.isTableLoading = false;
@@ -458,7 +460,7 @@ export default {
     // 批量处理
     getSelectTableDataFn() {
       if (this.selectTableData.length === 0) {
-        this.$message({
+        Message({
           showClose: true,
           message: "请选择需要批量处理的数据",
           type: "error",
@@ -476,7 +478,7 @@ export default {
           .then(async (res) => {
             const _res = await responseData(res);
             if (_res.code === 0) {
-              this.$message({
+              Message({
                 showClose: true,
                 message: res.msg,
                 type: "success",
@@ -484,7 +486,7 @@ export default {
               this.getListDataFn(this.seekData);
               this.centerDialogVisible = false;
             } else {
-              this.$message({
+              Message({
                 showClose: true,
                 message: res.msg,
                 type: "error",
@@ -499,7 +501,7 @@ export default {
     // 弹窗 - 取消删除
     cancelDeleteFn() {
       this.centerDialogVisible = false;
-      this.$message({
+      Message({
         showClose: true,
         message: "取消操作",
       });

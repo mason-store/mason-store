@@ -1,6 +1,11 @@
 <template>
   <div class="test">
-    <Integration v-if="asyncComponent" :requestConf="requestConf">
+    <Integration
+      v-if="asyncComponent"
+      :requestConf="requestConf"
+      :tableConf="tableConf"
+      :formConf="formConf"
+    >
       <!-- 主按钮区域（即'新增'按钮所在的那块区域） -->
       <template slot="mainbuts">
         <el-button

@@ -1,6 +1,6 @@
-
+import 'element-ui/lib/theme-chalk/index.css';
 import Integration from './Integration/index.vue';
-import "./styles/index.css"
+import "./styles/index.css";
 
 function install(Vue) {
   var components = [Integration];
@@ -13,9 +13,7 @@ function install(Vue) {
   });
 }
 
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue);
-}
+if (typeof window !== 'undefined' && window.Vue) install(window.Vue)
 
 export { install, Integration };
 export default {
