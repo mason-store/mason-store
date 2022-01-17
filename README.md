@@ -108,21 +108,42 @@ export default {
 </template>
 ```
 
-4. 更多详细配置，请查看示例代码。[点击前往完整源码](https://gitee.com/yuebu/mason-components/blob/master/examples/App.vue)
+4. 更多详细配置，请查看示例代码。[点击前往完整源码](https://gitee.com/yuebu/mason-store/blob/master/examples/App.vue)
 
-## **requestConf** 请求（按钮）配置
+## 本地调试
 
-**requestConf 属性说明**
+```bash
+# 把项目包放在一个干净的文件夹里，进行本地调试，了解更多详情内容
+# 安装依赖
+npm install
+# 启动服务器（模拟）
+npm run server
+# 启动项目
+npm run dev
+# 主要调试文件examples/App.vue,examples/server/index.js
+```
 
-| 参数         | 说明                                 | 类型    | 可选参数  | 默认值 |
-| :----------- | :----------------------------------- | :------ | :-------- | :----- |
-| type         | 按钮类型                             | string  | add,query | -      |
-| label        | 按钮名称                             | string  | -         | -      |
-| icon         | 图标名称，使用的是 element-ui 的图标 | string  | -         | -      |
-| isShow       | 是否显示此按钮                       | boolean | -         | -      |
-| requestModel | 点击此按钮会调用接口，请求配置       | object  | -         | -      |
+## 参数说明
 
-**requestModel 属性说明**
+### **requestConf**
+
+**requestConf**
+
+| 参数            | 说明                                  | 类型     | 可选参数                               | 默认值 |
+| :-------------- | :------------------------------------ | :------- | :------------------------------------- | :----- |
+| name            | 请求名称                              | string   | add,search,update,delete,switch,upload | -      |
+| type            | 位置类型                              | string   | main,search, table,dialog              | -      |
+| label           | 按钮名称，upload 和 switch 不需要配置 | string   | -                                      | -      |
+| prop            | 字段名称，仅有 switch 需要配置        | string   | -                                      | -      |
+| icon            | 图标名称，使用的是 element-ui 的图标  | string   | -                                      | -      |
+| isShow          | 是否显示此按钮                        | function | -                                      | -      |
+| remindWinConf   | 点击后确认操作的弹窗配置              | function | -                                      | -      |
+| isShowRemindWin | 是否需要确认操作的弹窗                | function | -                                      | -      |
+
+| requestModel | 点击此按钮会调用接口，请求配置 | object | - | - |
+| queryOneModel | 查询一条数据，点击按钮会直接调用这个方法，一般用于编辑按钮中（查询详情），与 requestModel 一样 | object | - | - |
+
+**requestModel or queryOneModel**
 
 | 参数         | 说明                                                                                                                                                   | 类型     | 可选参数 | 默认值 |
 | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :------- | :------- | :----- |
@@ -130,20 +151,20 @@ export default {
 | requestData  | 处理请求参数                                                                                                                                           | function | -        | -      |
 | responseData | 处理返回参数，这里需要处理成 object 数据返回。code=0,组件才会认为成功，进行下一步动作；code=1，组件会提示用户，停止界面交互；msg 是成功/失败的提示内容 | string   | -        | -      |
 
-## **tableConf** 表格配置
+### **tableConf**
 
-**tabelConf 属性说明**
-
-| 参数    | 说明     | 类型          | 可选参数                 | 默认值 |
+**tabelConf**
+| 参数 | 说明 | 类型 | 可选参数 | 默认值 |
 | :------ | :------- | :------------ | :----------------------- | :----- |
-| label   | 表头名称 | string        | -                        | -      |
-| prop    | 对应字段 | string        | -                        | -      |
-| type    | 类型     | string        | text,image,tag,operation | text   |
-| width   | 列宽     | number/string | -                        | -      |
-| fiexd   | 位置     | string        | left,right               | -      |
-| buttons | 按钮     | Array         | -                        | -      |
+| label | 表头名称 | string | - | - |
+| prop | 对应字段 | string | - | - |
+| type | 类型 | string | text,image,tag,switch,operation | text |
+| width | 列宽 | number/string | - | - |
+| activeValue | switch 开启的值（type 是 switch 的时候才需要配置） | number/string | - | - |
+| inactiveValue | switch 关闭的值（type 是 switch 的时候才需要配置） | number/string | - | - |
+| fiexd | 位置 | string | left,right | - |
 
-## **formConf** 表单配置
+### **formConf**
 
 | 参数          | 说明                               | 类型          | 可选参数                                                                                                                                                         | 默认值 |
 | :------------ | :--------------------------------- | :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
